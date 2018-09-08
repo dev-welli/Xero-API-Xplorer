@@ -191,19 +191,15 @@ app.get('/createcontact', async function (req, res) {
 });
 
 app.post('/createcontact', async function (req, res) {
-    console.log('create contact pre-try');
-    console.log(req.body.duplicate)
     try {
         authorizedOperation(req, res, '/createcontact', async function (xeroClient) {
-            console.log('create contact pre-try');
-            var contact = await xeroClient.contact.create(
+            var contact = await xeroClient.contacts.create(
 
                 {
                     Name: req.body.Name 
                 }
 
             ).then((data) => {
-                console.log(contact);
                 res.redirect('contacts')
             })
         })
@@ -272,16 +268,12 @@ app.get('/invoicesRAW', async function (req, res) {
 
 app.get('/createinvoice', async function (req, res) {
     return res.render('createinvoice', {
-
     });
 });
 
 app.post('/createinvoice', async function (req, res) {
-    console.log('create invoice pre-try');
-    console.log(req.body.duplicate)
     try {
         authorizedOperation(req, res, '/createinvoice', async function (xeroClient) {
-            console.log("create invoice after try")
             var invoice = await xeroClient.invoices.create(
 
                 {
@@ -301,7 +293,6 @@ app.post('/createinvoice', async function (req, res) {
                 }
 
             ).then((data) => {
-                console.log(invoice);
                 res.redirect('invoices')
             })
         })
