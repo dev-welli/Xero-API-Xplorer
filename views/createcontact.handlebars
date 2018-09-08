@@ -1,0 +1,9 @@
+{{#if outcome }}
+<h2>{{ outcome }}</h2>{{/if}} {{#if id }}<a href="/emailinvoice?id={{id}}" class="btn btn-xs btn-primary">Email</a>{{/if}}
+
+<h3>Add a Contact</h3>
+<form method="post" action="/createcontact">
+  Name <input name="Name" type="text" value="{{Name}}" placeholder="Name"><br>
+  <br>
+  <input type="submit" value="Submit">
+</form>

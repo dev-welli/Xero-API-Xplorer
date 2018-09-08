@@ -1,0 +1,23 @@
+{
+  "name": "xero-api-xplorer",
+  "version": "0.0.1",
+  "description": "Sample application for the xero-node library.",
+  "main": "index.js",
+  "repository": "git@github.com:XeroAPI/XeroAPI-Xplorer.git",
+  "author": "Welli Abdullah <welli_abdullah@hotmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "express": "3.4.8",
+    "express-handlebars": "^3.0.0",
+    "express-session": "^1.15.5",
+    "nodemon": "^1.18.3",
+    "xero-node": "^3.0.0-alpha.10"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}

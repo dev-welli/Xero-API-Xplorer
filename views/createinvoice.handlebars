@@ -1,0 +1,25 @@
+{{#if outcome }}
+<h2>{{ outcome }}</h2>{{/if}} {{#if id }}<a href="/emailinvoice?id={{id}}" class="btn btn-xs btn-primary">Email</a>{{/if}}
+
+<h3>Add an Invoice</h3>
+<form method="post" action="/createinvoice">
+  Invoice type 
+  <select name="Type">
+    <option value="ACCPAY">Accounts Payable</option>
+    <option value="ACCREC">Accounts Receivable</option>
+  </select> 
+  Contact <input name="Contact" type="text" value="{{contact}}" placeholder="Name"><br> 
+  Date <input name="Date" type="date" value="{{date}}" placeholder="YYYY-MM-DD">
+  Due Date<input  name="DueDate" type="date" value="{{dueDate}}" placeholder="e.g. 2018-08-30"><br>
+  Description <input name="Description" type="text" value="{{description}}"> 
+  Quantity <input name="Quantity" type="number" value="{{quantity}}"> 
+  Price <input name="Price" type="number" value="{{price}}">
+  Account Code <input name="AccountCode" type="text" value="200">
+  <select name="Status">
+    <option value="DRAFT">Draft</option>
+    <option value="SUBMITTED">Submitted</option>
+    <option value="AUTHORISED">Approved</option>
+  </select> 
+  <br>
+  <input type="submit" value="Submit">
+</form>
