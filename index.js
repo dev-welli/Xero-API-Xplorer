@@ -218,12 +218,13 @@ app.post('/createcontact', async function (req, res) {
 
 app.get('/invoices', async function (req, res) {
     authorizedOperation(req, res, '/invoices', function (xeroClient) {
-        xeroClient.invoices.get(
-            {Statuses: 'AUTHORISED'}
-            //{ Where: "Status=\"DRAFT\"" } //WORKING
-            //{Where: "Status%3d%22AUTHORISED%22"} //NOT WORKING
+        xeroClient.invoices.get({
+                    Statuses: 'AUTHORISED'
+                }
+                //{ Where: "Status=\"DRAFT\"" } //WORKING
+                //{Where: "Status%3d%22AUTHORISED%22"} //NOT WORKING
 
-        )
+            )
             .then(function (result) {
 
                 //console.log(JSON.stringify(result, null, 2));
@@ -245,26 +246,49 @@ app.get('/invoices', async function (req, res) {
     })
 });
 
+app.post('/filter', async function (req, res) {
+    authorizedOperation(req, res, '/invoicesRAW', function (xeroClient) {
+        
+        let request = req.body.getFilter
+        console.log("FILTEEER" + request);
+        console.log("STATUSES" + request.status);
+        
+            xeroClient.invoices.get({
+                    Statuses: request
+                }).then(function (result) {
+
+
+                    res.render('invoices', {
+                        invoices: result.Invoices,
+                        active: {
+                            invoices: true,
+                            nav: {
+                                accounting: true
+                            }
+                        }
+                    });
+                })
+                .catch(function (err) {
+                    handleErr(err, req, res, 'invoices');
+                })
+        
+    })
+})
+
 app.get('/invoicesRAW', async function (req, res) {
     authorizedOperation(req, res, '/invoicesRAW', function (xeroClient) {
         console.log(req.body);
         let filter = req.body.status
-        xeroClient.invoices.get(
-            {
+        xeroClient.invoices.get({
                 Statuses: filter
 
-            }
-        )
+            })
             .then(function (result) {
 
                 console.log("C", JSON.stringify(result, null, 2));
 
                 let invoices = result.Invoices
-                //let invoices2 = JSON.stringify(invoices, null, 4)
-                // invoices = JSON.stringify(invoices, null, "\t")
                 let rawInvoices = invoices.map(invoice => JSON.stringify(invoice, null, 4))
-                //let rawInvoices = invoices.map(invoice => JSON.beautify(invoice, null, 4))
-                //not working -> received TypeError: JSON.beautify is not a function
 
                 res.render('invoicesRAW', {
                     invoices: rawInvoices,
@@ -283,14 +307,51 @@ app.get('/invoicesRAW', async function (req, res) {
     })
 });
 
+// app.get('/invoicesRAW', async function (req, res) {
+//     authorizedOperation(req, res, '/invoicesRAW', function (xeroClient) {
+//         console.log(req.body);
+//         let filter = req.body.status
+//         xeroClient.invoices.get({
+//                 Statuses: filter
+
+//             })
+//             .then(function (result) {
+
+//                 console.log("C", JSON.stringify(result, null, 2));
+
+//                 let invoices = result.Invoices
+//                 //let invoices2 = JSON.stringify(invoices, null, 4)
+//                 // invoices = JSON.stringify(invoices, null, "\t")
+//                 let rawInvoices = invoices.map(invoice => JSON.stringify(invoice, null, 4))
+//                 //let rawInvoices = invoices.map(invoice => JSON.beautify(invoice, null, 4))
+//                 //not working -> received TypeError: JSON.beautify is not a function
+
+//                 res.render('invoicesRAW', {
+//                     invoices: rawInvoices,
+//                     active: {
+//                         invoices: true,
+//                         nav: {
+//                             accounting: true
+//                         }
+//                     }
+//                 });
+//             })
+//             .catch(function (err) {
+//                 handleErr(err, req, res, 'invoicesRAW');
+//             })
+
+//     })
+// });
+
 app.get('/createinvoice', async function (req, res) {
-    return res.render('createinvoice', {
-    });
+    return res.render('createinvoice', {});
 });
 
 app.post('/createinvoice', async function (req, res) {
     try {
         authorizedOperation(req, res, '/createinvoice', async function (xeroClient) {
+            console.dir("body" + req.body);
+
             var invoice = await xeroClient.invoices.create(
 
                 {
@@ -321,6 +382,49 @@ app.post('/createinvoice', async function (req, res) {
         })
     }
 })
+
+app.get('/createinvoiceRAW', async function (req, res) {
+    return res.render('createinvoiceRAW', {});
+});
+
+app.post('/createinvoiceRAW', async function (req, res) {
+    try {
+        authorizedOperation(req, res, '/createinvoiceRAW', async function (xeroClient) {
+            console.dir("body" + req.body);
+
+            var invoice = await xeroClient.invoices.create(
+
+                {
+                    Type: "ACCREC",
+                    Contact: {
+                        Name: "Jem The Cat"
+                    },
+                    Date: "2018-09-01",
+                    DueDate: "2018-09-02",
+                    LineItems: [{
+                        Description: "Consulting services as agreed (20% off standard rate)",
+                        Quantity: "10",
+                        UnitAmount: "100.00",
+                        AccountCode: "200"
+                    }],
+                    Status: "SUBMITTED"
+                }
+
+            ).then((data) => {
+                res.redirect('invoices')
+            })
+        })
+
+    } catch (err) {
+        res.render('createinvoiceRAW', {
+            outcome: 'Error',
+            err: err
+        })
+    }
+})
+
+
+//=================================
 
 app.use(function (req, res, next) {
     if (req.session)

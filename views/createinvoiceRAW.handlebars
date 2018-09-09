@@ -1,0 +1,41 @@
+<h3>Creating invoice from raw JSON</h3>
+<br />
+
+<div class="container">
+   <div class="form-container">
+
+      This is where the form will be contained<br />
+
+      <form action="/filter" method="post" name="getFilter" id="getFilter">
+         <div>
+            <label for="elementId">Invoice ID/Number</label><br/>
+            <input type="text" name="elementId" value="{{elementId}}">
+         </div>
+         <div>
+            <label for="modified-after">Modified After</label><br/>
+            <input type="date" name="modified-after" value="{{modified-after}}">
+         </div>
+         <div>
+            <label for="explicit-query">Explicit Query</label><br/>
+            <input type="text" name="status" value="{{status}}" placeholder="Invoice Status">
+            <input type="text" name="explicit-query-contactIds" value="{{explicit-query-contactIds}}" placeholder="ContactIDs">
+         </div>
+         <div>
+            <label for="where">Where</label><br/>
+            <input type="text" name="where" value="{{where}}">
+         </div>
+         <label for="page">Page</label><br/>
+         <input type="number" name="page" value="{{page}}">
+   </div>
+   <div>
+      <button type="submit">RUN</button>
+   </div>
+   </form>
+</div>
+<div class="response-container">
+   This is where the response will be contained<br /> {{#each invoices}} {{this}}
+   <br /> {{/each}}
+
+
+</div>
+</div>
