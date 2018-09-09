@@ -216,7 +216,9 @@ app.post('/createcontact', async function (req, res) {
 
 app.get('/invoices', async function (req, res) {
     authorizedOperation(req, res, '/invoices', function (xeroClient) {
-        xeroClient.invoices.get()
+        xeroClient.invoices.get(
+            {Statuses: 'AUTHORISED'}//why STATUS has to be STATUSES?
+        )
             .then(function (result) {
 
                 //console.log(JSON.stringify(result, null, 2));
