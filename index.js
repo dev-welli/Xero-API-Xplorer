@@ -5,6 +5,8 @@ const session = require('express-session');
 const XeroClient = require('xero-node').AccountingAPIClient;;
 const exphbs = require('express-handlebars');
 
+let beautify = require("json-beautify")
+
 // var Handlebars = require('hbs')
 
 var app = express();
@@ -120,7 +122,7 @@ function authorizedOperation(req, res, returnTo, callback) {
 }
 
 function handleErr(err, req, res, returnTo) {
-    console.log(err);
+    console.log("A", err);
     if (err.data && err.data.oauth_problem && err.data.oauth_problem == "token_rejected") {
         authorizeRedirect(req, res, returnTo);
     } else {
@@ -129,7 +131,7 @@ function handleErr(err, req, res, returnTo) {
 }
 
 app.get('/error', function (req, res) {
-    console.log(req.query.error);
+    console.log("B", req.query.error);
     res.render('index', {
         error: req.query.error
     });
@@ -196,7 +198,7 @@ app.post('/createcontact', async function (req, res) {
             var contact = await xeroClient.contacts.create(
 
                 {
-                    Name: req.body.Name 
+                    Name: req.body.Name
                 }
 
             ).then((data) => {
@@ -217,7 +219,10 @@ app.post('/createcontact', async function (req, res) {
 app.get('/invoices', async function (req, res) {
     authorizedOperation(req, res, '/invoices', function (xeroClient) {
         xeroClient.invoices.get(
-            {Statuses: 'AUTHORISED'}//why STATUS has to be STATUSES?
+            //{Statuses: 'AUTHORISED'}
+            { Where: "Status=\"DRAFT\"" } //WORKING
+            //{Where: "Status%3d%22AUTHORISED%22"} //NOT WORKING
+
         )
             .then(function (result) {
 
@@ -244,18 +249,21 @@ app.get('/invoicesRAW', async function (req, res) {
     authorizedOperation(req, res, '/invoicesRAW', function (xeroClient) {
         xeroClient.invoices.get()
             .then(function (result) {
-                
-                console.log(JSON.stringify(result, null, 2));
 
-                 let invoices = result.Invoices
-                //  invoices = JSON.stringify(invoices, null, 4)
+                console.log("C", JSON.stringify(result, null, 2));
+
+                let invoices = result.Invoices
+                //let invoices2 = JSON.stringify(invoices, null, 4)
                 // invoices = JSON.stringify(invoices, null, "\t")
                 let rawInvoices = invoices.map(invoice => JSON.stringify(invoice, null, 4))
+                //let rawInvoices = invoices.map(invoice => JSON.beautify(invoice, null, 4))
+                //not working -> received TypeError: JSON.beautify is not a function
+
                 res.render('invoicesRAW', {
                     invoices: rawInvoices,
                     active: {
-                        invoices: true,                
-                        nav: {                
+                        invoices: true,
+                        nav: {
                             accounting: true
                         }
                     }
