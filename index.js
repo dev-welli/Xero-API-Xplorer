@@ -219,8 +219,8 @@ app.post('/createcontact', async function (req, res) {
 app.get('/invoices', async function (req, res) {
     authorizedOperation(req, res, '/invoices', function (xeroClient) {
         xeroClient.invoices.get(
-            //{Statuses: 'AUTHORISED'}
-            { Where: "Status=\"DRAFT\"" } //WORKING
+            {Statuses: 'AUTHORISED'}
+            //{ Where: "Status=\"DRAFT\"" } //WORKING
             //{Where: "Status%3d%22AUTHORISED%22"} //NOT WORKING
 
         )
@@ -247,7 +247,14 @@ app.get('/invoices', async function (req, res) {
 
 app.get('/invoicesRAW', async function (req, res) {
     authorizedOperation(req, res, '/invoicesRAW', function (xeroClient) {
-        xeroClient.invoices.get()
+        console.log(req.body);
+        let filter = req.body.status
+        xeroClient.invoices.get(
+            {
+                Statuses: filter
+
+            }
+        )
             .then(function (result) {
 
                 console.log("C", JSON.stringify(result, null, 2));
