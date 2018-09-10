@@ -249,39 +249,48 @@ app.get('/invoices', async function (req, res) {
 app.post('/filter', async function (req, res) {
     //res.send("hello")
     authorizedOperation(req, res, '/invoicesRAW', function (xeroClient) {
-        
-        let request = req.body.status
+
+        let request = req.body.explicitQueryStatus
+        let request2 = req.body.explicitQueryContactIds
+        console.log("FORM BODY")
         console.info(req.body);
-        console.log("STATUSES" + request.status);
-        
-            xeroClient.invoices.get({
-                    Statuses: request
-                }).then(function (result) {
+        //console.log("STATUSES" + request.status);
 
+        xeroClient.invoices.get({
+               // Statuses: request
+                ContactIDs: request2
+            }).then(function (result) {
 
-                    res.render('invoicesRAW', {
-                        invoices: result.Invoices,
-                        active: {
-                            invoices: true,
-                            nav: {
-                                accounting: true
-                            }
+                let invoices = result.Invoices
+                let rawInvoices = invoices.map(invoice => JSON.stringify(invoice, null, 4))
+
+                res.render('invoicesRAW', {
+                    invoices: rawInvoices,
+                    active: {
+                        invoices: true,
+                        nav: {
+                            accounting: true
                         }
-                    });
-                })
-                .catch(function (err) {
-                    handleErr(err, req, res, 'invoicesRAW');
-                })
-        
+                    }
+                });
+            })
+            .catch(function (err) {
+                handleErr(err, req, res, 'invoicesRAW');
+            })
+
     })
 })
 
 app.get('/invoicesRAW', async function (req, res) {
     authorizedOperation(req, res, '/invoicesRAW', function (xeroClient) {
         console.log(req.body);
-        let filter = req.body.status
+
+        //let filter = req.body.status
+        //let filter = req.body.explicitQueryContactIds
+
         xeroClient.invoices.get({
-                Statuses: filter
+                //Statuses: filter
+                //ContactIDs: filter
 
             })
             .then(function (result) {
