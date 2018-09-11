@@ -5,7 +5,9 @@ const session = require('express-session');
 const XeroClient = require('xero-node').AccountingAPIClient;;
 const exphbs = require('express-handlebars');
 
-//let beautify = require("json-beautify")
+let beautify = require("json-beautify")
+
+// var Handlebars = require('hbs')
 
 var app = express();
 
@@ -16,12 +18,56 @@ var exbhbsEngine = exphbs.create({
         __dirname + '/views/partials/'
     ],
     helpers: {
+        ifCond: function (v1, operator, v2, options) {
+
+            switch (operator) {
+                case '==':
+                    return (v1 == v2) ? options.fn(this) : options.inverse(this);
+                case '===':
+                    return (v1 === v2) ? options.fn(this) : options.inverse(this);
+                case '!=':
+                    return (v1 != v2) ? options.fn(this) : options.inverse(this);
+                case '!==':
+                    return (v1 !== v2) ? options.fn(this) : options.inverse(this);
+                case '<':
+                    return (v1 < v2) ? options.fn(this) : options.inverse(this);
+                case '<=':
+                    return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+                case '>':
+                    return (v1 > v2) ? options.fn(this) : options.inverse(this);
+                case '>=':
+                    return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+                case '&&':
+                    return (v1 && v2) ? options.fn(this) : options.inverse(this);
+                case '||':
+                    return (v1 || v2) ? options.fn(this) : options.inverse(this);
+                default:
+                    return options.inverse(this);
+            }
+        },
             beautiful: function (beautify) {
-                //console.log(beautify)
-                return JSON.stringify(beautify)}
+                console.log(beautify)
+                return JSON.stringify(beautify)},
+        debug: function (optionalValue) {
+            // console.log("Current Context");
+            // console.log("====================");
+            // console.log(this);
+
+            if (optionalValue) {
+                // console.log("Value");
+                // console.log("====================");
+                // console.log(optionalValue);
+            }
         }
     }
-);
+});
+
+// Handlebars.registerHelper("beautiful", function (beautify) {
+//     beautify = result.Invoices
+//     return JSON.stringify(beautify, null, 2)
+// })
+
+
 
 app.engine('handlebars', exbhbsEngine.engine);
 
@@ -98,7 +144,7 @@ app.get('/error', function (req, res) {
 
 // Home Page
 app.get('/', function (req, res) {
-    res.redirect('/invoicesRAW')
+    res.redirect('/invoices')
     // res.render('index', {
     //     active: {
     //         overview: true
@@ -124,17 +170,13 @@ app.get('/access', async function (req, res) {
 
 //Contacts endpoint
 
-app.get('/contactsRAW', async function (req, res) {
-    authorizedOperation(req, res, '/contactsRAW', function (xeroClient) {
-        //console.log(req.body);
-
-        xeroClient.contacts.get({
-
-            })
+app.get('/contacts', async function (req, res) {
+    authorizedOperation(req, res, '/contacts', function (xeroClient) {
+        var contacts = [];
+        xeroClient.contacts.get()
             .then(function (result) {
-
-                res.render('contactsRAW', {
-                    contacts: result,
+                res.render('contacts', {
+                    contacts: result.Contacts,
                     active: {
                         contacts: true,
                         nav: {
@@ -144,11 +186,10 @@ app.get('/contactsRAW', async function (req, res) {
                 });
             })
             .catch(function (err) {
-                handleErr(err, req, res, 'contactsRAW');
+                handleErr(err, req, res, 'contacts');
             })
-
     })
-});
+});;
 
 app.get('/createcontact', async function (req, res) {
     return res.render('createcontact', {
@@ -180,6 +221,35 @@ app.post('/createcontact', async function (req, res) {
 
 //Invoices endpoint
 
+app.get('/invoices', async function (req, res) {
+    authorizedOperation(req, res, '/invoices', function (xeroClient) {
+        xeroClient.invoices.get({
+                    Statuses: 'AUTHORISED'
+                }
+                //{ Where: "Status=\"DRAFT\"" } //WORKING
+                //{Where: "Status%3d%22AUTHORISED%22"} //NOT WORKING
+
+            )
+            .then(function (result) {
+
+                //console.log(JSON.stringify(result, null, 2));
+
+                res.render('invoices', {
+                    invoices: result.Invoices,
+                    active: {
+                        invoices: true,
+                        nav: {
+                            accounting: true
+                        }
+                    }
+                });
+            })
+            .catch(function (err) {
+                handleErr(err, req, res, 'invoices');
+            })
+
+    })
+});
 
 app.post('/filter', async function (req, res) {
     //res.send("hello")
@@ -240,7 +310,9 @@ app.get('/invoicesRAW', async function (req, res) {
             })
             .then(function (result) {
 
-                //console.log("CCCCC", JSON.stringify(result, null, 2));
+                console.log("C", JSON.stringify(result, null, 2));
+
+            
 
                 res.render('invoicesRAW', {
                     invoices: result,
@@ -260,7 +332,51 @@ app.get('/invoicesRAW', async function (req, res) {
 });
 
 
+app.get('/createinvoice', async function (req, res) {
+    return res.render('createinvoice', {});
+});
 
+app.post('/createinvoice', async function (req, res) {
+    console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx");
+    
+    try {
+        authorizedOperation(req, res, '/createinvoice', async function (xeroClient) {
+            console.log("form content");
+            console.dir(req.body);
+            console.log("--------------------------------------------------------");
+            
+            var invoice = await xeroClient.invoices.create(
+
+                {
+                    Type: req.body.Type,
+                    Contact: {
+                        Name: req.body.Contact
+                    },
+                    Date: req.body.Date,
+                    DueDate: req.body.DueDate || '',
+                    LineItems: [{
+                        Description: req.body.Description,
+                        Quantity: req.body.Quantity,
+                        UnitAmount: req.body.Price,
+                        AccountCode: req.body.AccountCode || ''
+                    }],
+                    Status: req.body.Status
+                }
+
+            );
+            console.log(invoice)
+                res.redirect('invoices')
+            })
+        
+
+    } catch (err) {
+        console.log(err)
+        res.render('createinvoice', {
+            outcome: 'Error',
+            err: err
+        })
+    }
+})
 
 app.get('/createinvoiceRAW', async function (req, res) {
     return res.render('createinvoiceRAW', {});

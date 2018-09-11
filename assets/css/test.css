@@ -1,11 +1,39 @@
-body{
+body {
   background-color: aqua
 }
 
-.form-container{
-  background-color: pink
+.form-container {
+  width: 1200px;
+  padding: 10px;
+  background-color: rgba(9, 125, 202, 0.70)
 }
 
-.response-container{
-  background-color: yellow
+.form-text-box{
+  padding-bottom: 20px;
+}
+
+.response-container {
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  background-color: rgba(9, 125, 202, 0.70)
+}
+
+.resizedTextbox {
+  width: 300px;
+  height: 500px
+}
+
+pre {
+  white-space: pre-wrap;
+  
+  height: 400px;
+	padding: 5px;
+  margin: 5px;
+  overflow-wrap: normal;
+	
+	font-size: 12px;
+	line-height: 20px;
+	background: #efefef;
+	border: 2px solid #777;
 }

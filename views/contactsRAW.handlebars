@@ -1,4 +1,4 @@
-<h3>Invoices result in raw JSON</h3>
+<h3>Contacts result in raw JSON</h3>
 <br />
 
 <div class="container">
@@ -8,7 +8,7 @@
 
     <form action="/filter" method="post">
       <div class="form-text-box">
-        <label for="elementId">Invoice ID/Number</label><br/>
+        <label for="elementId">ContactID/Number</label><br/>
         <input type="text" name="elementId" value="{{elementId}}">
       </div>
       <div class="form-text-box">
@@ -17,7 +17,6 @@
       </div>
       <div class="form-text-box">
         <label for="explicit-query">Explicit Query</label><br/>
-        <input type="text" name="explicitQueryStatus" value="{{status}}" placeholder="Invoice Status">
         <input type="text" name="explicitQueryContactIds" value="{{explicitQueryContactIds}}" placeholder="ContactIDs">
       </div>
       <div class="form-text-box">
@@ -35,7 +34,7 @@
 <div class="response-container">
   Response: <br /> 
   
-  <pre>{{beautiful invoices}}</pre>
+  <pre>{{beautiful contacts}}</pre>
  
 
 </div>
