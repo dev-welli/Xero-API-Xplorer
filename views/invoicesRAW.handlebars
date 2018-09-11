@@ -9,16 +9,18 @@
     <form action="/filter" method="post">
       <div class="form-text-box">
         <label for="elementId">Invoice ID/Number</label><br/>
-        <input type="text" name="elementId" value="{{elementId}}">
+        <input type="text" name="elementId" id="elementId" value="{{elementId}}">
       </div>
       <div class="form-text-box">
         <label for="modified-after">Modified After</label><br/>
-        <input type="date" name="modified-after" value="{{modified-after}}">
+        <input type="date" name="modified-after" id="modified-after" value="{{modified-after}}">
       </div>
       <div class="form-text-box">
         <label for="explicit-query">Explicit Query</label><br/>
-        <input type="text" name="explicitQueryStatus" value="{{status}}" placeholder="Invoice Status">
-        <input type="text" name="explicitQueryContactIds" value="{{explicitQueryContactIds}}" placeholder="ContactIDs">
+        <input type="text" name="explicitQueryInvoiceNumbers" id="explicitQueryInvoiceNumbers" placeholder="Invoice Numbers">
+        <input type="text" name="explicitQueryInvoiceIds" id="explicitQueryInvoiceIds"  placeholder="InvoiceIDs">
+        <input type="text" name="explicitQueryStatus" id="explicitQueryStatus"  placeholder="Invoice Status">
+        <input type="text" name="explicitQueryContactIds" id="explicitQueryContactIds"  placeholder="ContactIDs">
       </div>
       <div class="form-text-box">
         <label for="where">Where</label><br/>
