@@ -1,9 +1,9 @@
 body {
-  background-color: aqua
+  background-color: white
 }
 
 .form-container {
-  width: 1200px;
+  width: 1100px;
   padding: 10px;
   background-color: rgba(9, 125, 202, 0.70)
 }
@@ -23,6 +23,8 @@ body {
   width: 300px;
   height: 500px
 }
+
+
 
 pre {
   white-space: pre-wrap;

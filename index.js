@@ -16,12 +16,12 @@ var exbhbsEngine = exphbs.create({
         __dirname + '/views/partials/'
     ],
     helpers: {
-            beautiful: function (beautify) {
-                //console.log(beautify)
-                return JSON.stringify(beautify)}
+        beautiful: function (beautify) {
+            //console.log(beautify)
+            return JSON.stringify(beautify)
         }
     }
-);
+});
 
 app.engine('handlebars', exbhbsEngine.engine);
 
@@ -98,12 +98,12 @@ app.get('/error', function (req, res) {
 
 // Home Page
 app.get('/', function (req, res) {
-    res.redirect('/invoicesRAW')
-    // res.render('index', {
-    //     active: {
-    //         overview: true
-    //     }
-    // });
+    //res.redirect('/invoicesRAW')
+    res.render('index', {
+        active: {
+            overview: true
+        }
+    });
 });
 
 // Redirected from xero with oauth results
@@ -118,6 +118,26 @@ app.get('/access', async function (req, res) {
 
     var returnTo = req.session.returnTo;
     res.redirect(returnTo || '/');
+});
+
+app.get('/organisations', async function (req, res) {
+    authorizedOperation(req, res, '/organisations', async function (xeroClient) {
+        try {
+            let organisations = await xeroClient.organisations.get()
+            res.render('organisations', {
+                organisations: organisations.Organisations,
+                active: {
+                    organisations: true,
+                    nav: {
+                        accounting: true
+                    }
+                }
+            })
+        } catch (err) {
+            handleErr(err, req, res, 'organisations');
+        }
+
+    })
 });
 
 //Will only work with Contacts & Invoices endpoints for now. Deleting the rest
@@ -191,11 +211,11 @@ app.post('/filter', async function (req, res) {
 
         let filter = {};
 
-        if(req.body.explicitQueryContactIds) {
+        if (req.body.explicitQueryContactIds) {
             filter.ContactID = req.body.explicitQueryContactIds
         }
-        
-        if(req.body.explicitQueryStatus) {
+
+        if (req.body.explicitQueryStatus) {
             filter.Status = req.body.explicitQueryStatus
         }
 
@@ -203,6 +223,17 @@ app.post('/filter', async function (req, res) {
         console.log("FORM BODY")
         console.info(req.body);
         //console.log("STATUSES" + request.status);
+
+        // TODO: Right now the form result will create the below object but I need to remove 
+        // if the field is not filled (empty string). Also need to think how to combine them with & instead of commas
+        //  { InvoiceID: '134',
+        //   'modified-after': '',
+        //   InvoiceNumbers: '575',
+        //   IDs: '45764',
+        //   Statuses: 'DRAFT',
+        //   ContactIDs: '687',
+        //   where: 'Contact.Name="Welli"',
+        //   page: '1' }
 
         xeroClient.invoices.get(filter).then(function (result) {
 
@@ -273,7 +304,7 @@ app.post('/createinvoiceRAW', async function (req, res) {
             console.log("form content");
             //console.dir(req.body);
             console.log("--------------------------------------------------------");
-            
+
 
             var invoice = await xeroClient.invoices.create(
 
@@ -295,9 +326,9 @@ app.post('/createinvoiceRAW', async function (req, res) {
 
             )
             console.log(invoice)
-                res.redirect('invoices')
-            })
-        
+            res.redirect('invoices')
+        })
+
 
     } catch (err) {
         res.render('createinvoiceRAW', {

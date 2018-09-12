@@ -1,15 +1,15 @@
-<h3>Invoices result in raw JSON</h3>
+<h3>GET Invoices</h3>
 <br />
 
 <div class="container">
   <div class="form-container">
 
-    This is where the form will be contained<br />
+    Request: <br />
 
     <form action="/filter" method="post">
       <div class="form-text-box">
         <label for="elementId">Invoice ID/Number</label><br/>
-        <input type="text" name="elementId" id="elementId" value="{{elementId}}">
+        <input type="text" name="InvoiceID" id="elementId" value="{{elementId}}">
       </div>
       <div class="form-text-box">
         <label for="modified-after">Modified After</label><br/>
@@ -17,10 +17,10 @@
       </div>
       <div class="form-text-box">
         <label for="explicit-query">Explicit Query</label><br/>
-        <input type="text" name="explicitQueryInvoiceNumbers" id="explicitQueryInvoiceNumbers" placeholder="Invoice Numbers">
-        <input type="text" name="explicitQueryInvoiceIds" id="explicitQueryInvoiceIds"  placeholder="InvoiceIDs">
-        <input type="text" name="explicitQueryStatus" id="explicitQueryStatus"  placeholder="Invoice Status">
-        <input type="text" name="explicitQueryContactIds" id="explicitQueryContactIds"  placeholder="ContactIDs">
+        <input type="text" name="InvoiceNumbers" id="explicitQueryInvoiceNumbers" placeholder="Invoice Numbers">
+        <input type="text" name="IDs" id="explicitQueryInvoiceIds"  placeholder="InvoiceIDs">
+        <input type="text" name="Statuses" id="explicitQueryStatus"  placeholder="Invoice Status">
+        <input type="text" name="ContactIDs" id="explicitQueryContactIds"  placeholder="ContactIDs">
       </div>
       <div class="form-text-box">
         <label for="where">Where</label><br/>
