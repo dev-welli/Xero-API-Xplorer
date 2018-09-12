@@ -1,0 +1,41 @@
+body {
+  background-color: white
+}
+
+.form-container {
+  width: 1100px;
+  padding: 10px;
+  background-color: rgba(9, 125, 202, 0.70)
+}
+
+.form-text-box{
+  padding-bottom: 20px;
+}
+
+.response-container {
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  background-color: rgba(9, 125, 202, 0.70)
+}
+
+.resizedTextbox {
+  width: 300px;
+  height: 500px
+}
+
+
+
+pre {
+  white-space: pre-wrap;
+  
+  height: 400px;
+	padding: 5px;
+  margin: 5px;
+  overflow-wrap: normal;
+	
+	font-size: 12px;
+	line-height: 20px;
+	background: #efefef;
+	border: 2px solid #777;
+}
